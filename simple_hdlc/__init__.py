@@ -61,7 +61,8 @@ def init_crc16_8408_tab():
         CRC16_8408_TAB[i] = crc & 0xFFFF
 
 
-def CRC16_X25(crc: int, data: bytes) -> int:
+def CRC16_X25(data: bytes) -> int:
+    crc = 0xFFFF
     for byte in data:
         crc = (crc >> 8) ^ CRC16_8408_TAB[(crc ^ byte) & 0xFF]
     return (crc ^ 0xFFFF) & 0xFFFF
@@ -106,10 +107,10 @@ def init_crc16_ccitt_false_tab():
         CRC16_CCITT_FALSE_TAB[i] = crc
         
 
-def CRC16_CCITT_FALSE(data: bytes, length: int) -> int:
+def CRC16_CCITT_FALSE(data: bytes) -> int:
     crc16 = CRCCCIT_START
 
-    for byte in data[:length]:
+    for byte in data:
         tab_val = CRC16_CCITT_FALSE_TAB[(crc16 >> 8) ^ byte]
         crc16 = ((crc16 << 8) ^ tab_val) & 0xFFFF
 
@@ -118,7 +119,7 @@ def CRC16_CCITT_FALSE(data: bytes, length: int) -> int:
     
 def calcCRC(data):
     c = CRC16_X25(data)
-    return bytearray([(c >> 8) & 0xFF, c & 0xFF])
+    return bytearray([c & 0xFF, (c >> 8) & 0xFF])
     
 
 def bin_to_hex(b):
